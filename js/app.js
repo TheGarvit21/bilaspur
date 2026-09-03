@@ -7,18 +7,18 @@
 document.addEventListener('DOMContentLoaded', async () => {
 
   // ==========================================
-  // 0. GRAND ROYAL CURTAIN OPENING REVEAL (10 SEC READING & SLOW-MOTION EXPERIENCE)
+  // 0. GRAND ROYAL CURTAIN OPENING REVEAL (5 SEC EXPERIENCE)
   // ==========================================
   const curtainStage = document.getElementById('royalCurtainStage');
   if (curtainStage) {
-    // 2.8s focused reading time for "VIRASAT E KEHLOOR", then 7.5s majestic slow-motion reveal
-    const openTimer = setTimeout(() => { curtainStage.classList.add('opened'); }, 2800);
+    // 0.8s focused reading time for the crest, then 4.2s smooth slow-motion reveal (Total = 5.0s)
+    const openTimer = setTimeout(() => { curtainStage.classList.add('opened'); }, 800);
     curtainStage.addEventListener('click', () => { 
       clearTimeout(openTimer);
       curtainStage.classList.add('opened'); 
-      setTimeout(() => { curtainStage.style.display = 'none'; }, 1500);
+      setTimeout(() => { curtainStage.style.display = 'none'; }, 1200);
     });
-    setTimeout(() => { curtainStage.style.display = 'none'; }, 10800);
+    setTimeout(() => { curtainStage.style.display = 'none'; }, 5200);
   }
 
   // ==========================================

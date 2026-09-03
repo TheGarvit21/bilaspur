@@ -64,7 +64,7 @@
   justify-content: center;
   overflow: hidden;
   pointer-events: auto;
-  transition: visibility 0.6s ease 10.2s;
+  transition: visibility 0.4s ease 5.2s;
 }
 
 .royal-curtain-stage.opened {
@@ -95,7 +95,7 @@
     );
   background-size: 100% 100%, 180px 100%;
   box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.95);
-  transition: transform 7.5s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 4.2s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform;
 }
 
@@ -190,7 +190,7 @@
   border-radius: 14px;
   padding: 2.2rem 3.4rem;
   box-shadow: 0 15px 50px rgba(0, 0, 0, 0.95), 0 0 45px rgba(212, 175, 55, 0.5);
-  transition: opacity 3.5s cubic-bezier(0.4, 0, 0.2, 1) 0.6s, transform 6s cubic-bezier(0.22, 1, 0.36, 1) 0.6s;
+  transition: opacity 1.8s cubic-bezier(0.4, 0, 0.2, 1) 0.3s, transform 3.5s cubic-bezier(0.22, 1, 0.36, 1) 0.3s;
 }
 
 .royal-curtain-stage.opened .curtain-center-crest {
