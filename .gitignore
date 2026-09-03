@@ -1,3 +1,6 @@
 # Temporary Office Lock Files
 .~lock.*#
 *.tmp
+
+# Raw uncompressed WAV files (replaced by web MP3s for production)
+*.wav

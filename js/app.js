@@ -408,7 +408,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   function playKingAudio(id) {
-    const audioFilename = currentAudioLang === 'hindi' ? 'hindi.wav' : 'eng.wav';
+    const audioFilename = currentAudioLang === 'hindi' ? 'hindi.mp3' : 'eng.mp3';
     const audioPath = `data/${id}/${audioFilename}`;
 
     // If already exists and playing, pause/stop it
