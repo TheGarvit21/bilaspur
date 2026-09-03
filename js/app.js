@@ -1,100 +1,582 @@
 /**
  * VIRASAT E KEHLOOR — THE ROYAL HERITAGE OF BILASPUR
- * Interactive Engine: Rulers Timeline, AI Storyteller, Speech Synthesis & Modals
+ * Data-driven engine: loads all king data from /data/ folder
+ * Audio: Hindi (default) / English toggle
  */
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
 
   // ==========================================
-  // 0. GRAND ROYAL CURTAIN OPENING REVEAL
+  // 0. GRAND ROYAL CURTAIN OPENING REVEAL (10 SEC READING & SLOW-MOTION EXPERIENCE)
   // ==========================================
   const curtainStage = document.getElementById('royalCurtainStage');
   if (curtainStage) {
-    // Open curtains after brief theatrical pause (600ms)
-    setTimeout(() => {
-      curtainStage.classList.add('opened');
-    }, 600);
-
-    // Or open immediately if user clicks
-    curtainStage.addEventListener('click', () => {
-      curtainStage.classList.add('opened');
+    // 2.8s focused reading time for "VIRASAT E KEHLOOR", then 7.5s majestic slow-motion reveal
+    const openTimer = setTimeout(() => { curtainStage.classList.add('opened'); }, 2800);
+    curtainStage.addEventListener('click', () => { 
+      clearTimeout(openTimer);
+      curtainStage.classList.add('opened'); 
+      setTimeout(() => { curtainStage.style.display = 'none'; }, 1500);
     });
-
-    // Remove from interaction layer once opened
-    setTimeout(() => {
-      curtainStage.style.display = 'none';
-    }, 2400);
+    setTimeout(() => { curtainStage.style.display = 'none'; }, 10800);
   }
 
   // ==========================================
-  // 1. DATA REPOSITORY: RULERS & EVENTS
+  // 1. LOAD ALL KINGS FROM DATA / MASTER CACHE
   // ==========================================
-  const RULERS_DATA = {
-    1: {
-      name: "Raja Kirpal Chand",
-      reign: "1650 – 1690",
-      img: "assets/images/ruler_1_kirpal.jpg",
-      capital: "Kot Kahlur",
-      fort: "Kot Kahlur / Tiun Fort",
-      patronage: "Fort Architecture & Border Defense",
-      bio: "Raja Kirpal Chand was an unyielding guardian of Kehloor sovereignty. During his forty-year rule, he consolidated the hill principality's defenses, rebuilt the ancient towers of Kot Kahlur, and repelled multiple regional incursions along the Sutlej gorge."
-    },
-    2: {
-      name: "Raja Govind Chand",
-      reign: "1690 – 1720",
-      img: "assets/images/ruler_2_govind.jpg",
-      capital: "Bilaspur (Vyaspur)",
-      fort: "Sriun Fort",
-      patronage: "Agrarian Canals & Sutlej River Trade",
-      bio: "Under Raja Govind Chand, Kehloor enjoyed agricultural prosperity and flourishing trade along the Sutlej waterway. He laid the foundation for peaceful diplomatic ties with neighbouring hill monarchies and patronized traditional temple architecture."
-    },
-    3: {
-      name: "Raja Hira Chand",
-      reign: "1720 – 1760",
-      img: "assets/images/ruler_3_hira.jpg",
-      capital: "Bilaspur",
-      fort: "Bahadurpur Fort",
-      patronage: "Pahari Literature & Civic Reservoirs",
-      bio: "A visionary ruler whose wisdom transformed Kehloor into a progressive mountain state. He commissioned state granaries, built stone water tanks across hill villages, and invited skilled painters and poets to the Bilaspur court."
-    },
-    4: {
-      name: "Raja Sansar Chand",
-      reign: "1760 – 1823",
-      img: "assets/images/ruler_4_sansar.jpg",
-      capital: "Bilaspur & Sujanpur",
-      fort: "Kot Kahlur / Kangra",
-      patronage: "Pahari Miniature Paintings & Classical Sitar",
-      bio: "The most iconic monarch of the era. His reign sparked a cultural golden age in the Western Himalayas. Master painters like Nainsukh and Manaku created exquisite Pahari miniature artworks in the Bilaspur court, depicting the Geet Govinda and Mahabharata."
-    },
-    5: {
-      name: "Raja Ranjit Chand",
-      reign: "1823 – 1843",
-      img: "assets/images/ruler_5_ranjit.jpg",
-      capital: "Bilaspur",
-      fort: "Fatehpur Fort",
-      patronage: "Rajput Cavalry & Weapon Metallurgy",
-      bio: "Raja Ranjit Chand commanded high respect among Western Himalayan monarchs for his statesmanship and valiant military drills. He navigated intricate treaties during a turbulent period of regional power shifts."
-    },
-    6: {
-      name: "Raja Amar Chand",
-      reign: "1843 – 1860",
-      img: "assets/images/ruler_6_amar.jpg",
-      capital: "Bilaspur",
-      fort: "Rang Mahal & Riverside Pavilions",
-      patronage: "The Grand Rang Mahal & State Legal Code",
-      bio: "Renowned for commissioning the fabled Rang Mahal on the left bank of the Sutlej—a magnificent palace famous for its frescoed chambers and waterfront jharokhas. He codified the customary laws of Kehloor."
-    },
-    7: {
-      name: "Raja Jagat Singh",
-      reign: "1860 – 1890",
-      img: "assets/images/ruler_7_jagat.jpg",
-      capital: "Bilaspur",
-      fort: "Kot Kahlur Citadel",
-      patronage: "Modern Judicial Courts & Telegraphic Lines",
-      bio: "Modernizer of the realm who inaugurated modern schools, laid postal and telegraph networks through mountainous terrain, and instituted judicial courts to ensure swift justice across all districts of Kehloor."
-    }
-  };
+  let allKings = [];
+  let currentAudioLang = 'hindi'; // DEFAULT: Hindi
+  let currentAudio = null;
+  let currentKingIndex = 0;
+  let currentPlaybackRate = 1.0;
+  let currentFontSizeRem = 1.15;
+  let highlightRafId = null;
 
+  // Use master bundled data if available (zero network delay)
+  if (typeof window !== 'undefined' && Array.isArray(window.KINGS_MASTER_DATA) && window.KINGS_MASTER_DATA.length > 0) {
+    allKings = window.KINGS_MASTER_DATA;
+  } else {
+    try {
+      const res = await fetch('data/index.json');
+      allKings = await res.json();
+    } catch(e) {
+      console.error('Failed to load kings index', e);
+    }
+  }
+
+  // ==========================================
+  // 2. BUILD RULERS CAROUSEL FROM DATA
+  // ==========================================
+  const rulersTrack = document.getElementById('rulersTrack');
+  if (rulersTrack && allKings.length > 0) {
+    rulersTrack.innerHTML = '';
+    allKings.forEach((king, idx) => {
+      const card = document.createElement('div');
+      card.className = 'ruler-card' + (idx === 0 ? ' active-featured' : '');
+      card.setAttribute('data-id', king.index);
+      card.setAttribute('data-name', king.name);
+      card.setAttribute('data-timeline', king.timeline || '');
+
+      const featuredFrame = idx === 0 ? 'featured-frame' : '';
+      const mandalaRings = idx === 0 
+        ? '<div class="mandala-outer-ring"></div><div class="mandala-inner-ring"></div>' 
+        : '';
+      const activePin = idx === 0 ? 'active-pin' : '';
+
+      card.innerHTML = `
+        <div class="ruler-avatar-frame ${featuredFrame}">
+          ${mandalaRings}
+          <div class="ruler-avatar-inner">
+            <img src="data/${king.index}/${king.index}.png" 
+                 alt="${king.name}" 
+                 class="ruler-portrait" 
+                 loading="lazy"
+                 onerror="this.src='assets/images/ruler_1_kirpal.jpg'">
+          </div>
+          <div class="timeline-node-pin ${activePin}"></div>
+        </div>
+        <div class="ruler-info">
+          <h3 class="ruler-name">${king.name}</h3>
+          <span class="ruler-years">${king.timeline ? '(' + king.timeline + ')' : ''}</span>
+        </div>
+      `;
+      rulersTrack.appendChild(card);
+    });
+
+    bindRulerCards();
+  }
+
+  // ==========================================
+  // 3. RULER CARD CLICK → OPEN FULLSCREEN MODAL
+  // ==========================================
+  function bindRulerCards() {
+    const rulerCards = document.querySelectorAll('.ruler-card');
+    rulerCards.forEach(card => {
+      card.addEventListener('click', async () => {
+        const id = card.getAttribute('data-id');
+        highlightCardInTrack(id);
+        await openRulerModal(id);
+      });
+    });
+  }
+
+  function highlightCardInTrack(id) {
+    const rulerCards = document.querySelectorAll('.ruler-card');
+    rulerCards.forEach(c => {
+      c.classList.remove('active-featured');
+      const frame = c.querySelector('.ruler-avatar-frame');
+      if (frame) {
+        frame.classList.remove('featured-frame');
+        const mOuter = frame.querySelector('.mandala-outer-ring');
+        const mInner = frame.querySelector('.mandala-inner-ring');
+        if (mOuter) mOuter.remove();
+        if (mInner) mInner.remove();
+        const pin = frame.querySelector('.timeline-node-pin');
+        if (pin) pin.classList.remove('active-pin');
+      }
+    });
+
+    const activeCard = document.querySelector(`.ruler-card[data-id='${id}']`);
+    if (activeCard) {
+      activeCard.classList.add('active-featured');
+      const frame = activeCard.querySelector('.ruler-avatar-frame');
+      if (frame) {
+        frame.classList.add('featured-frame');
+        const outer = document.createElement('div');
+        outer.className = 'mandala-outer-ring';
+        const inner = document.createElement('div');
+        inner.className = 'mandala-inner-ring';
+        frame.prepend(outer);
+        frame.prepend(inner);
+        const pin = frame.querySelector('.timeline-node-pin');
+        if (pin) pin.classList.add('active-pin');
+      }
+    }
+  }
+
+  // ==========================================
+  // 4. OPEN RULER MODAL WITH COMPLETE DOCS
+  // ==========================================
+  async function openRulerModal(id) {
+    const modal = document.getElementById('rulerModal');
+    if (!modal) return;
+
+    stopAudio();
+
+    const king = allKings.find(k => k.index == id);
+    if (!king) return;
+
+    currentKingIndex = allKings.findIndex(k => k.index == id);
+
+    modal.dataset.kingId = id;
+    modal.dataset.kingName = king.name;
+    modal.dataset.kingTimeline = king.timeline || '';
+
+    // Set King Portrait
+    const img = document.getElementById('rulerModalImg');
+    if (img) {
+      img.src = `data/${id}/${id}.png`;
+      img.onerror = () => { img.src = `assets/images/ruler_1_kirpal.jpg`; };
+      img.alt = king.name;
+    }
+
+    // Set King Name, Timeline, Counter
+    const nameEl = document.getElementById('rulerModalName');
+    const reignEl = document.getElementById('rulerModalReign');
+    const numEl = document.getElementById('rulerModalNum');
+    if (nameEl) nameEl.textContent = king.name;
+    if (reignEl) reignEl.textContent = king.timeline || '';
+    if (numEl) numEl.textContent = currentKingIndex + 1;
+
+    // Reset Audio UI
+    resetAudioUI();
+
+    // Render Text for current language
+    await renderChronicleText(king);
+
+    // Update Language Buttons UI
+    updateAudioLangUI();
+
+    // Setup Reading Progress
+    setupReadingProgress();
+
+    modal.classList.add('active');
+    const scroll = document.getElementById('rfmDocScroll');
+    if (scroll) scroll.scrollTop = 0;
+  }
+
+  // Format seconds to mm:ss
+  function formatTime(seconds) {
+    if (!seconds || isNaN(seconds) || seconds < 0) return '00:00';
+    const m = Math.floor(seconds / 60);
+    const s = Math.floor(seconds % 60);
+    return `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+  }
+
+  function resetAudioUI() {
+    const playBtn = document.getElementById('btnPlayKingAudio');
+    const playText = document.getElementById('playBtnText');
+    const playIcon = document.getElementById('playIconSvg');
+    const dot = document.getElementById('rulerAudioDot');
+    const statusEl = document.getElementById('rulerAudioStatus');
+
+    if (playBtn) playBtn.classList.remove('playing');
+    if (playText) playText.textContent = 'सुनें / Listen';
+    if (playIcon) playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+    if (dot) dot.classList.remove('speaking');
+    if (statusEl) statusEl.textContent = currentAudioLang === 'hindi' ? 'हिंदी ऑडियो' : 'English Audio';
+  }
+
+  // Renders text as clickable interactive paragraphs
+  async function renderChronicleText(king) {
+    const bioEl = document.getElementById('rulerModalBio');
+    const titleEl = document.getElementById('rfmChronicleTitle');
+    if (!bioEl) return;
+
+    let rawText = '';
+    if (currentAudioLang === 'hindi') {
+      rawText = king.hindiText;
+      if (!rawText) {
+        try {
+          const res = await fetch(`data/${king.index}/${king.index}.txt`);
+          if (res.ok) rawText = await res.text();
+        } catch(e) {}
+      }
+      if (titleEl) titleEl.textContent = `HISTORICAL CHRONICLE OF ${king.name.toUpperCase()} (हिंदी)`;
+    } else {
+      // English: check bundled English text first
+      rawText = king.englishText;
+      if (!rawText || rawText.length < 20) {
+        try {
+          const engRes = await fetch(`data/${king.index}/eng.txt`);
+          if (engRes.ok) rawText = await engRes.text();
+        } catch(e) {}
+      }
+      if (!rawText || rawText.length < 20) {
+        try {
+          const docxRes = await fetch(`data/${king.index}/${king.index}.docx`);
+          if (docxRes.ok && typeof mammoth !== 'undefined') {
+            const arrayBuffer = await docxRes.arrayBuffer();
+            const result = await mammoth.extractRawText({ arrayBuffer });
+            rawText = result.value.trim();
+          }
+        } catch(e) {}
+      }
+      if (titleEl) titleEl.textContent = `HISTORICAL CHRONICLE OF ${king.name.toUpperCase()} (ENGLISH)`;
+    }
+
+    if (!rawText || rawText.trim().length === 0) {
+      rawText = `${king.name} reigned ${king.timeline || 'over Kehloor'}. The historical documentation for this sovereign is preserved in the Kehloor royal archives.`;
+    }
+
+    // Split text into clean paragraphs
+    const paragraphs = rawText
+      .split(/\n\s*\n/)
+      .map(p => p.trim())
+      .filter(p => p.length > 0);
+
+    bioEl.innerHTML = paragraphs.map((p, idx) => `
+      <div class="rfm-para" data-para-idx="${idx}" title="Click to listen from this paragraph">
+        ${p.replace(/\n/g, '<br>')}
+      </div>
+    `).join('');
+
+    // Attach click-to-seek listeners on each paragraph
+    const paraEls = bioEl.querySelectorAll('.rfm-para');
+    paraEls.forEach(el => {
+      el.addEventListener('click', () => {
+        const idx = parseInt(el.getAttribute('data-para-idx'), 10);
+        seekAudioToParagraph(idx, paraEls.length);
+      });
+    });
+
+    // Update scroll hint
+    setTimeout(() => {
+      const scrollEl = document.getElementById('rfmDocScroll');
+      const hint = document.getElementById('rfmScrollHint');
+      if (scrollEl && hint) {
+        hint.style.opacity = scrollEl.scrollHeight > scrollEl.clientHeight ? '1' : '0';
+      }
+    }, 60);
+  }
+
+  function updateAudioLangUI() {
+    const hindiBtn = document.getElementById('btnLangHindi');
+    const engBtn = document.getElementById('btnLangEng');
+    const statusEl = document.getElementById('rulerAudioStatus');
+
+    if (hindiBtn && engBtn) {
+      if (currentAudioLang === 'hindi') {
+        hindiBtn.classList.add('rfm-lang-active');
+        engBtn.classList.remove('rfm-lang-active');
+        if (statusEl) statusEl.textContent = 'हिंदी ऑडियो';
+      } else {
+        engBtn.classList.add('rfm-lang-active');
+        hindiBtn.classList.remove('rfm-lang-active');
+        if (statusEl) statusEl.textContent = 'English Audio';
+      }
+    }
+  }
+
+  function setupReadingProgress() {
+    const scrollEl = document.getElementById('rfmDocScroll');
+    const bar = document.getElementById('rfmReadingProgress');
+    const hint = document.getElementById('rfmScrollHint');
+    if (!scrollEl || !bar) return;
+
+    scrollEl.onscroll = () => {
+      const maxScroll = scrollEl.scrollHeight - scrollEl.clientHeight;
+      if (maxScroll <= 0) {
+        bar.style.width = '100%';
+        if (hint) hint.style.opacity = '0';
+        return;
+      }
+      const pct = (scrollEl.scrollTop / maxScroll) * 100;
+      bar.style.width = Math.min(pct, 100) + '%';
+      if (hint) hint.style.opacity = pct > 85 ? '0' : '1';
+    };
+  }
+
+  // ==========================================
+  // 5. INTERACTIVE AUDIO PLAYER + PARAGRAPH SYNC
+  // ==========================================
+  function clearParaHighlights() {
+    if (highlightRafId) {
+      cancelAnimationFrame(highlightRafId);
+      highlightRafId = null;
+    }
+    document.querySelectorAll('#rulerModalBio .rfm-para').forEach(p => {
+      p.classList.remove('para-active', 'para-done');
+    });
+  }
+
+  function startParaHighlightLoop() {
+    clearParaHighlights();
+    const paraEls = Array.from(document.querySelectorAll('#rulerModalBio .rfm-para'));
+    if (!paraEls.length) return;
+
+    const scrollEl = document.getElementById('rfmDocScroll');
+    let lastActiveIdx = -1;
+
+    function loop() {
+      if (!currentAudio || currentAudio.paused || currentAudio.ended) {
+        return;
+      }
+
+      const duration = currentAudio.duration || 1;
+      const current = currentAudio.currentTime || 0;
+      const pct = Math.min(current / duration, 1);
+
+      // Calculate active paragraph index
+      const activeIdx = Math.min(Math.floor(pct * paraEls.length), paraEls.length - 1);
+
+      if (activeIdx !== lastActiveIdx) {
+        paraEls.forEach((p, i) => {
+          p.classList.remove('para-active', 'para-done');
+          if (i < activeIdx) {
+            p.classList.add('para-done');
+          } else if (i === activeIdx) {
+            p.classList.add('para-active');
+            // Auto-scroll to keep active paragraph centered
+            if (scrollEl) {
+              const paraTop = p.offsetTop;
+              const paraHeight = p.offsetHeight;
+              const viewScroll = scrollEl.scrollTop;
+              const viewHeight = scrollEl.clientHeight;
+
+              if (paraTop < viewScroll + 40 || paraTop + paraHeight > viewScroll + viewHeight - 40) {
+                scrollEl.scrollTo({
+                  top: Math.max(0, paraTop - Math.floor(viewHeight / 3)),
+                  behavior: 'smooth'
+                });
+              }
+            }
+          }
+        });
+        lastActiveIdx = activeIdx;
+      }
+
+      highlightRafId = requestAnimationFrame(loop);
+    }
+
+    highlightRafId = requestAnimationFrame(loop);
+  }
+
+  // Click on paragraph seeks audio directly!
+  function seekAudioToParagraph(idx, totalParas) {
+    if (!totalParas || totalParas <= 0) return;
+    const targetPct = idx / totalParas;
+
+    const modal = document.getElementById('rulerModal');
+    const id = modal ? modal.dataset.kingId : null;
+    if (!id) return;
+
+    if (!currentAudio) {
+      playKingAudio(id);
+      currentAudio.addEventListener('loadedmetadata', () => {
+        if (currentAudio) {
+          currentAudio.currentTime = targetPct * currentAudio.duration;
+        }
+      }, { once: true });
+    } else {
+      if (currentAudio.duration) {
+        currentAudio.currentTime = targetPct * currentAudio.duration;
+        if (currentAudio.paused) currentAudio.play();
+        startParaHighlightLoop();
+      }
+    }
+  }
+
+  function playKingAudio(id) {
+    const audioFilename = currentAudioLang === 'hindi' ? 'hindi.wav' : 'eng.wav';
+    const audioPath = `data/${id}/${audioFilename}`;
+
+    // If already exists and playing, pause/stop it
+    if (currentAudio && !currentAudio.ended && currentAudio.src.includes(audioFilename)) {
+      if (currentAudio.paused) {
+        currentAudio.playbackRate = currentPlaybackRate;
+        currentAudio.play();
+        updatePlayingUI(true);
+        startParaHighlightLoop();
+        return;
+      } else {
+        // Toggle stop
+        stopAudio();
+        return;
+      }
+    }
+
+    // Stop any previous audio
+    stopAudio();
+
+    currentAudio = new Audio(audioPath);
+    currentAudio.playbackRate = currentPlaybackRate;
+
+    updatePlayingUI(true);
+
+    currentAudio.addEventListener('loadedmetadata', () => {
+      startParaHighlightLoop();
+    });
+
+    currentAudio.play().catch(err => {
+      console.warn('Audio playback error:', err);
+      updatePlayingUI(false);
+      const statusEl = document.getElementById('rulerAudioStatus');
+      if (statusEl) statusEl.textContent = 'ऑडियो उपलब्ध नहीं है';
+    });
+
+    currentAudio.onended = () => {
+      clearParaHighlights();
+      updatePlayingUI(false);
+    };
+  }
+
+  function updatePlayingUI(isPlaying) {
+    const playBtn = document.getElementById('btnPlayKingAudio');
+    const playText = document.getElementById('playBtnText');
+    const playIcon = document.getElementById('playIconSvg');
+    const dot = document.getElementById('rulerAudioDot');
+    const statusEl = document.getElementById('rulerAudioStatus');
+
+    if (isPlaying) {
+      if (playBtn) playBtn.classList.add('playing');
+      if (playText) playText.textContent = 'रोकें / Stop';
+      if (playIcon) playIcon.innerHTML = '<rect x="6" y="6" width="12" height="12"/>';
+      if (dot) dot.classList.add('speaking');
+      if (statusEl) {
+        statusEl.textContent = currentAudioLang === 'hindi' ? 'ऑडियो चल रहा है...' : 'Playing audio...';
+      }
+    } else {
+      if (playBtn) playBtn.classList.remove('playing');
+      if (playText) playText.textContent = 'सुनें / Listen';
+      if (playIcon) playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+      if (dot) dot.classList.remove('speaking');
+      if (statusEl) {
+        statusEl.textContent = currentAudioLang === 'hindi' ? 'हिंदी ऑडियो' : 'English Audio';
+      }
+    }
+  }
+
+  function stopAudio() {
+    clearParaHighlights();
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+      currentAudio = null;
+    }
+    resetAudioUI();
+  }
+
+  // ==========================================
+  // 6. GLOBAL INTERACTIVE CONTROLS
+  // ==========================================
+  document.addEventListener('click', async (e) => {
+    const modal = document.getElementById('rulerModal');
+    if (!modal || !modal.classList.contains('active')) return;
+    const id = modal.dataset.kingId;
+    const king = allKings.find(k => k.index == id);
+
+    // Switch to Hindi
+    if (e.target.id === 'btnLangHindi' || e.target.closest('#btnLangHindi')) {
+      if (currentAudioLang !== 'hindi') {
+        currentAudioLang = 'hindi';
+        stopAudio();
+        updateAudioLangUI();
+        if (king) await renderChronicleText(king);
+      }
+    }
+
+    // Switch to English
+    if (e.target.id === 'btnLangEng' || e.target.closest('#btnLangEng')) {
+      if (currentAudioLang !== 'english') {
+        currentAudioLang = 'english';
+        stopAudio();
+        updateAudioLangUI();
+        if (king) await renderChronicleText(king);
+      }
+    }
+
+    // Play / Stop Audio Toggle Button
+    if (e.target.id === 'btnPlayKingAudio' || e.target.closest('#btnPlayKingAudio')) {
+      if (id) playKingAudio(id);
+    }
+
+    // Back to Kings Button
+    if (e.target.id === 'rulerModalBackBtn' || e.target.closest('#rulerModalBackBtn')) {
+      closeAllModals();
+    }
+
+    // Previous King
+    if (e.target.id === 'rfmPrevKing' || e.target.closest('#rfmPrevKing')) {
+      if (currentKingIndex > 0) {
+        currentKingIndex--;
+        const prevKing = allKings[currentKingIndex];
+        highlightCardInTrack(prevKing.index);
+        await openRulerModal(prevKing.index);
+      }
+    }
+
+    // Next King
+    if (e.target.id === 'rfmNextKing' || e.target.closest('#rfmNextKing')) {
+      if (currentKingIndex < allKings.length - 1) {
+        currentKingIndex++;
+        const nextKing = allKings[currentKingIndex];
+        highlightCardInTrack(nextKing.index);
+        await openRulerModal(nextKing.index);
+      }
+    }
+
+    // Click on Timeline King Card opens ruler chronicle modal directly
+    const timelineRow = e.target.closest('.timeline-row');
+    if (timelineRow && timelineRow.dataset.kingIdx) {
+      const idx = parseInt(timelineRow.dataset.kingIdx, 10);
+      closeAllModals();
+      await openRulerModal(idx);
+    }
+  });
+
+
+  // ==========================================
+  // 7. CAROUSEL NAVIGATION
+  // ==========================================
+  const trackContainer = document.getElementById('rulersTrackContainer');
+  const btnRulerPrev = document.getElementById('rulerPrevBtn');
+  const btnRulerNext = document.getElementById('rulerNextBtn');
+
+  if (btnRulerPrev && trackContainer) {
+    btnRulerPrev.addEventListener('click', () => {
+      trackContainer.scrollBy({ left: -220, behavior: 'smooth' });
+    });
+  }
+  if (btnRulerNext && trackContainer) {
+    btnRulerNext.addEventListener('click', () => {
+      trackContainer.scrollBy({ left: 220, behavior: 'smooth' });
+    });
+  }
+
+  // ==========================================
+  // 8. POPULAR EVENTS INTERACTION (unchanged)
+  // ==========================================
   const EVENTS_DATA = {
     kahlur_fort: {
       title: "Kahlur Fort Construction",
@@ -142,99 +624,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // Pre-configured AI Lore Knowledge Base
-  const AI_LORE = {
-    fort: "The Fortress of Kot Kahlur stands perched high in the Naina Devi hills at over 3,600 feet. Founded in 697 AD by Raja Bir Chand, its massive sandstone walls defended the heart of Kehloor. Legend holds that Raja Bir Chand saw a goat fight off a fierce leopard at this very summit, which he took as a divine omen of victory to build the state's central fort!",
-    anandpur: "The campaigns around Anandpur Sahib between Raja Bhim Chand of Kehloor and the tenth Sikh Guru, Guru Gobind Singh Ji, are recorded in the classical chronicles of 'Bichitra Natak'. After strategic battles, a historic treaty was forged, cementing mutual respect and regional tranquility across the Shivalik hills.",
-    submerged: "Ah, the sunken Atlantis of Himachal! Before the construction of the mighty Bhakra Dam in 1961 created the vast Govind Sagar reservoir, the ancient stone city of Bilaspur stood along the turquoise Sutlej river. Its magnificent Rang Mahal palace, 30 historic temples, and ornate stone bathing ghats are now submerged underwater. During dry summers when reservoir levels recede, the sacred stone spires of the submerged temples emerge once again like ghosts from history!",
-    hira: "Raja Hira Chand (1857-1883) is revered as the architect of modern Bilaspur. Known as the Golden Era of Kehloor, he abolished archaic taxes, built the main carriage roads connecting the hills to the plains, introduced tea plantations, and laid down the state's first modern treasury.",
-    paintings: "The Bilaspur School of Pahari Miniature Painting is world-renowned for its delicate brushstrokes and vibrant mineral pigments made from lapis lazuli, crushed pearls, and pure gold foil. The court painters depicted lyrical scenes of the Rasamanjari, Ramayana, and portraiture of the royal Chandel kings."
-  };
-
-  // ==========================================
-  // 2. RULERS TIMELINE INTERACTION
-  // ==========================================
-  const rulerCards = document.querySelectorAll('.ruler-card');
-  const trackContainer = document.getElementById('rulersTrackContainer');
-  const btnRulerPrev = document.getElementById('rulerPrevBtn');
-  const btnRulerNext = document.getElementById('rulerNextBtn');
-
-  // Carousel navigation
-  if (btnRulerPrev && trackContainer) {
-    btnRulerPrev.addEventListener('click', () => {
-      trackContainer.scrollBy({ left: -220, behavior: 'smooth' });
-    });
-  }
-
-  if (btnRulerNext && trackContainer) {
-    btnRulerNext.addEventListener('click', () => {
-      trackContainer.scrollBy({ left: 220, behavior: 'smooth' });
-    });
-  }
-
-  // Ruler Card Click -> Highlight & Open Ruler Detail Modal
-  rulerCards.forEach(card => {
-    card.addEventListener('click', () => {
-      const id = card.getAttribute('data-id');
-      const data = RULERS_DATA[id];
-
-      // Update active state visual
-      rulerCards.forEach(c => {
-        c.classList.remove('active-featured');
-        const frame = c.querySelector('.ruler-avatar-frame');
-        if (frame) {
-          frame.classList.remove('featured-frame');
-          const mOuter = frame.querySelector('.mandala-outer-ring');
-          const mInner = frame.querySelector('.mandala-inner-ring');
-          if (mOuter) mOuter.remove();
-          if (mInner) mInner.remove();
-        }
-      });
-
-      card.classList.add('active-featured');
-      const frame = card.querySelector('.ruler-avatar-frame');
-      if (frame) {
-        frame.classList.add('featured-frame');
-        const outer = document.createElement('div');
-        outer.className = 'mandala-outer-ring';
-        const inner = document.createElement('div');
-        inner.className = 'mandala-inner-ring';
-        frame.prepend(outer);
-        frame.prepend(inner);
-      }
-
-      // Update and open Ruler Modal
-      if (data) {
-        openRulerModal(data);
-      }
-    });
-  });
-
-  function openRulerModal(data) {
-    const modal = document.getElementById('rulerModal');
-    if (!modal) return;
-
-    document.getElementById('rulerModalImg').src = data.img;
-    document.getElementById('rulerModalName').textContent = data.name;
-    document.getElementById('rulerModalReign').textContent = `(${data.reign})`;
-    document.getElementById('rulerModalBio').textContent = data.bio;
-    document.getElementById('rulerModalCapital').textContent = data.capital;
-    document.getElementById('rulerModalFort').textContent = data.fort;
-    document.getElementById('rulerModalPatronage').textContent = data.patronage;
-
-    // Listen button in ruler modal triggers AI storyteller voice
-    const btnListen = document.getElementById('btnRulerListenStory');
-    btnListen.onclick = () => {
-      closeAllModals();
-      openStorytellerWithPrompt(`Tell me the glorious historical tale of ${data.name} of Kehloor (${data.reign}).`);
-    };
-
-    modal.classList.add('active');
-  }
-
-  // ==========================================
-  // 3. POPULAR EVENTS EXPLORE INTERACTION
-  // ==========================================
   const exploreButtons = document.querySelectorAll('.btn-event-explore');
   exploreButtons.forEach(btn => {
     btn.addEventListener('click', (e) => {
@@ -255,15 +644,11 @@ document.addEventListener('DOMContentLoaded', () => {
       factsContainer.innerHTML = '';
       if (data.facts) {
         const ul = document.createElement('ul');
-        ul.style.listStyle = 'none';
-        ul.style.paddingLeft = '0';
-        ul.style.marginTop = '1rem';
+        ul.style.cssText = 'list-style:none;padding-left:0;margin-top:1rem;';
         data.facts.forEach(f => {
           const li = document.createElement('li');
-          li.style.marginBottom = '0.5rem';
-          li.style.fontSize = '0.92rem';
-          li.style.color = '#e2d2bf';
-          li.innerHTML = `❖ <span style="margin-left: 6px;">${f}</span>`;
+          li.style.cssText = 'margin-bottom:0.5rem;font-size:0.92rem;color:#e2d2bf;';
+          li.innerHTML = `❖ <span style="margin-left:6px;">${f}</span>`;
           ul.appendChild(li);
         });
         factsContainer.appendChild(ul);
@@ -274,8 +659,16 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ==========================================
-  // 4. AI STORYTELLER & SPEECH SYNTHESIS
+  // 9. AI STORYTELLER (unchanged)
   // ==========================================
+  const AI_LORE = {
+    fort: "The Fortress of Kot Kahlur stands perched high in the Naina Devi hills at over 3,600 feet. Founded in 697 AD by Raja Bir Chand, its massive sandstone walls defended the heart of Kehloor. Legend holds that Raja Bir Chand saw a goat fight off a fierce leopard at this very summit, which he took as a divine omen of victory to build the state's central fort!",
+    anandpur: "The campaigns around Anandpur Sahib between Raja Bhim Chand of Kehloor and the tenth Sikh Guru, Guru Gobind Singh Ji, are recorded in the classical chronicles of 'Bichitra Natak'. After strategic battles, a historic treaty was forged, cementing mutual respect and regional tranquility across the Shivalik hills.",
+    submerged: "Ah, the sunken Atlantis of Himachal! Before the construction of the mighty Bhakra Dam in 1961 created the vast Govind Sagar reservoir, the ancient stone city of Bilaspur stood along the turquoise Sutlej river. Its magnificent Rang Mahal palace, 30 historic temples, and ornate stone bathing ghats are now submerged underwater. During dry summers when reservoir levels recede, the sacred stone spires of the submerged temples emerge once again like ghosts from history!",
+    hira: "Raja Hira Chand (1857-1883) is revered as the architect of modern Bilaspur. Known as the Golden Era of Kehloor, he abolished archaic taxes, built the main carriage roads connecting the hills to the plains, introduced tea plantations, and laid down the state's first modern treasury.",
+    paintings: "The Bilaspur School of Pahari Miniature Painting is world-renowned for its delicate brushstrokes and vibrant mineral pigments made from lapis lazuli, crushed pearls, and pure gold foil. The court painters depicted lyrical scenes of the Rasamanjari, Ramayana, and portraiture of the royal Chandel kings."
+  };
+
   const btnOpenStoryteller = document.getElementById('btnOpenStoryteller');
   const storytellerModal = document.getElementById('storytellerModal');
   const storytellerForm = document.getElementById('storytellerForm');
@@ -296,7 +689,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Handle suggested story chips
   storyChips.forEach(chip => {
     chip.addEventListener('click', () => {
       const topic = chip.getAttribute('data-topic');
@@ -309,17 +701,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Handle custom user questions in AI Storyteller
   if (storytellerForm) {
     storytellerForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const query = storytellerInput.value.trim();
       if (!query) return;
-
       addChatMessage("user", query);
       storytellerInput.value = "";
-
-      // Generate AI historical response
       setTimeout(() => {
         const reply = generateChronicleResponse(query);
         addChatMessage("bot", reply);
@@ -331,18 +719,14 @@ document.addEventListener('DOMContentLoaded', () => {
   function addChatMessage(sender, text) {
     const msgDiv = document.createElement('div');
     msgDiv.className = `msg ${sender}-msg`;
-
     if (sender === 'bot') {
       msgDiv.innerHTML = `
         <div class="msg-avatar"><img src="assets/images/storyteller_avatar.jpg" alt="AI"></div>
         <div class="msg-content">${text}</div>
       `;
     } else {
-      msgDiv.innerHTML = `
-        <div class="msg-content">${text}</div>
-      `;
+      msgDiv.innerHTML = `<div class="msg-content">${text}</div>`;
     }
-
     storytellerMessages.appendChild(msgDiv);
     storytellerMessages.scrollTop = storytellerMessages.scrollHeight;
     lastNarrationText = text;
@@ -350,95 +734,56 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function generateChronicleResponse(query) {
     const q = query.toLowerCase();
-    if (q.includes("fort") || q.includes("kahlur") || q.includes("qila")) {
-      return AI_LORE.fort;
-    } else if (q.includes("battle") || q.includes("war") || q.includes("anandpur") || q.includes("fight")) {
-      return AI_LORE.anandpur;
-    } else if (q.includes("lake") || q.includes("dam") || q.includes("water") || q.includes("submerge") || q.includes("rang mahal") || q.includes("bhakra")) {
-      return AI_LORE.submerged;
-    } else if (q.includes("hira") || q.includes("golden") || q.includes("reform")) {
-      return AI_LORE.hira;
-    } else if (q.includes("art") || q.includes("paint") || q.includes("miniature") || q.includes("culture")) {
-      return AI_LORE.paintings;
-    } else if (q.includes("sansar")) {
-      return "Raja Sansar Chand's reign was the crown jewel of Kehloor's cultural renaissance. He formed legendary alliances across the Kangra and Shivalik valleys and protected the sacred arts against all adversaries.";
-    } else {
-      return `By the sacred waters of the Sutlej, the chronicles of Kehloor hold that ${query} remains deeply woven into the valor and royal heritage of Bilaspur. From the peaks of Naina Devi to the deep blue of Govind Sagar, the Chandel lineage forever remembers this legacy!`;
-    }
+    if (q.includes("fort") || q.includes("kahlur") || q.includes("qila")) return AI_LORE.fort;
+    if (q.includes("battle") || q.includes("war") || q.includes("anandpur") || q.includes("fight")) return AI_LORE.anandpur;
+    if (q.includes("lake") || q.includes("dam") || q.includes("water") || q.includes("submerge") || q.includes("rang mahal") || q.includes("bhakra")) return AI_LORE.submerged;
+    if (q.includes("hira") || q.includes("golden") || q.includes("reform")) return AI_LORE.hira;
+    if (q.includes("art") || q.includes("paint") || q.includes("miniature") || q.includes("culture")) return AI_LORE.paintings;
+    if (q.includes("sansar")) return "Raja Sansar Chand's reign was the crown jewel of Kehloor's cultural renaissance. He formed legendary alliances across the Kangra and Shivalik valleys and protected the sacred arts against all adversaries.";
+    return `By the sacred waters of the Sutlej, the chronicles of Kehloor hold that ${query} remains deeply woven into the valor and royal heritage of Bilaspur. From the peaks of Naina Devi to the deep blue of Govind Sagar, the Chandel lineage forever remembers this legacy!`;
   }
 
-  // Web Speech Synthesis (Text-To-Speech)
   function speakText(text) {
-    if (!('speechSynthesis' in window)) {
-      if (audioStatusText) audioStatusText.textContent = "Voice synthesis not supported in this browser.";
-      return;
-    }
-
-    window.speechSynthesis.cancel(); // cancel any active speech
-
-    // Clean HTML tags for speech
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
     const cleanText = text.replace(/<[^>]*>?/gm, '');
     currentUtterance = new SpeechSynthesisUtterance(cleanText);
-    currentUtterance.rate = 0.92; // dignified royal pace
+    currentUtterance.rate = 0.92;
     currentUtterance.pitch = 0.95;
-
-    // Pick best available English voice
     const voices = window.speechSynthesis.getVoices();
     const preferredVoice = voices.find(v => v.lang.includes('en-IN') || v.name.includes('India') || v.lang.includes('en-GB'));
-    if (preferredVoice) {
-      currentUtterance.voice = preferredVoice;
-    }
-
+    if (preferredVoice) currentUtterance.voice = preferredVoice;
     currentUtterance.onstart = () => {
       if (audioDot) audioDot.classList.add('speaking');
       if (audioStatusText) audioStatusText.textContent = "Narrating Royal Chronicle...";
     };
-
     currentUtterance.onend = () => {
       if (audioDot) audioDot.classList.remove('speaking');
       if (audioStatusText) audioStatusText.textContent = "Narrator: Ready";
     };
-
     currentUtterance.onerror = () => {
       if (audioDot) audioDot.classList.remove('speaking');
       if (audioStatusText) audioStatusText.textContent = "Narrator: Ready";
     };
-
     window.speechSynthesis.speak(currentUtterance);
   }
 
   if (btnNarrateAudio) {
     btnNarrateAudio.addEventListener('click', () => {
-      if (lastNarrationText) {
-        speakText(lastNarrationText);
-      } else {
-        speakText("Pranam! Ask me any chronicle of Bilaspur and I shall narrate its glorious past.");
-      }
+      if (lastNarrationText) speakText(lastNarrationText);
+      else speakText("Pranam! Ask me any chronicle of Bilaspur and I shall narrate its glorious past.");
     });
   }
-
   if (btnStopAudio) {
     btnStopAudio.addEventListener('click', () => {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-      }
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
       if (audioDot) audioDot.classList.remove('speaking');
       if (audioStatusText) audioStatusText.textContent = "Narrator: Stopped";
     });
   }
 
-  function openStorytellerWithPrompt(promptText) {
-    storytellerModal.classList.add('active');
-    addChatMessage("user", promptText);
-    setTimeout(() => {
-      const reply = generateChronicleResponse(promptText);
-      addChatMessage("bot", reply);
-      speakText(reply);
-    }, 500);
-  }
-
   // ==========================================
-  // 5. MODAL MANAGER (GENERIC)
+  // 10. MODAL MANAGER
   // ==========================================
   const modalTriggers = document.querySelectorAll('[data-modal]');
   const allModals = document.querySelectorAll('.royal-modal-backdrop');
@@ -457,35 +802,32 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   closeButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      closeAllModals();
-    });
+    btn.addEventListener('click', () => { closeAllModals(); });
   });
 
   allModals.forEach(modal => {
     modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        closeAllModals();
-      }
+      if (e.target === modal) closeAllModals();
     });
   });
 
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      closeAllModals();
-    }
+    if (e.key === 'Escape') closeAllModals();
   });
 
   function closeAllModals() {
+    // Close regular modals
     allModals.forEach(m => m.classList.remove('active'));
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-    }
+    // Close fullscreen ruler modal
+    const rulerFullModal = document.getElementById('rulerModal');
+    if (rulerFullModal) rulerFullModal.classList.remove('active');
+    stopAudio();
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     if (audioDot) audioDot.classList.remove('speaking');
   }
 
   // ==========================================
-  // 6. 360° TOUR PAN CONTROLS
+  // 11. 360° TOUR PAN CONTROLS
   // ==========================================
   const tourPanoImg = document.getElementById('tourPanoImg');
   const btnPanLeft = document.getElementById('tourPanLeft');
@@ -499,14 +841,12 @@ document.addEventListener('DOMContentLoaded', () => {
       tourPanoImg.style.transform = `scale(1.3) translateX(${currentPanOffset}px)`;
     });
   }
-
   if (btnPanRight && tourPanoImg) {
     btnPanRight.addEventListener('click', () => {
       currentPanOffset = Math.max(currentPanOffset - 40, -100);
       tourPanoImg.style.transform = `scale(1.3) translateX(${currentPanOffset}px)`;
     });
   }
-
   if (btnPanReset && tourPanoImg) {
     btnPanReset.addEventListener('click', () => {
       currentPanOffset = 0;
@@ -515,7 +855,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ==========================================
-  // 7. HERO CTA & NAVIGATION
+  // 12. HERO CTA & NAVIGATION
   // ==========================================
   const btnBeginJourney = document.getElementById('btnBeginJourney');
   if (btnBeginJourney) {
@@ -531,14 +871,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Mobile menu toggle
   const mobileBtn = document.getElementById('mobileMenuBtn');
   const royalNav = document.getElementById('royalNav');
   if (mobileBtn && royalNav) {
-    mobileBtn.addEventListener('click', () => {
-      royalNav.classList.toggle('open');
-    });
+    mobileBtn.addEventListener('click', () => { royalNav.classList.toggle('open'); });
   }
 
-  console.log("Virasat E Kehloor initialized with full royal heritage experience.");
+  // Trigger first king on load for demo
+  // (optional – uncomment if you want modal to open on load)
+  // if (allKings.length > 0) await openRulerModal(allKings[0].index);
+
+  console.log(`Virasat E Kehloor initialized. ${allKings.length} kings loaded from data folder.`);
 });

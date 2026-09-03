@@ -5,10 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VIRASAT E KEHLOOR — The Royal Heritage of Bilaspur</title>
   <meta name="description" content="Step into the timeless journey of Bilaspur (Kehloor). Discover legendary rulers, epic battles, cultural renaissance, and interactive AI storytelling.">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="assets/images/favicon-64.png">
+  <link rel="apple-touch-icon" href="assets/images/bilaspur_royal_logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Marcellus&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <!-- Mammoth.js: reads .docx files to extract English text -->
+  <script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
 </head>
 <body>
 
@@ -34,7 +40,9 @@
 
     <!-- Center Royal Seal / Crest -->
     <div class="curtain-center-crest" id="curtainCenterCrest">
-      <div class="crest-crown-icon">👑</div>
+      <div class="curtain-crest-logo-wrap">
+        <img src="assets/images/bilaspur_royal_logo.png" alt="Bilaspur Kehloor State Chandel Crest" class="curtain-crest-logo">
+      </div>
       <h2 class="crest-seal-title">VIRASAT E KEHLOOR</h2>
       <p class="crest-seal-subtitle">THE ROYAL HERITAGE OF BILASPUR</p>
       <div class="crest-seal-divider">❖ ── ✦ ── ❖</div>
@@ -50,30 +58,9 @@
       <div class="header-inner">
         
         <!-- Left: Royal Crest & Brand Name -->
-        <a href="#hero" class="brand-container" id="brandLogo">
+        <a href="#hero" class="brand-container" id="brandLogo" title="Virasat e Kehloor — Bilaspur">
           <div class="crest-icon-wrapper">
-            <svg class="crest-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <!-- Ornate Royal Crest -->
-              <circle cx="50" cy="50" r="46" stroke="#d4af37" stroke-width="1.5" stroke-dasharray="2 3"/>
-              <path d="M50 14 L55 24 L66 22 L60 31 L68 38 L57 41 L50 33 L43 41 L32 38 L40 31 L34 22 L45 24 Z" fill="url(#goldGrad)" stroke="#ffd700" stroke-width="0.75"/>
-              <path d="M30 45 Q50 38 70 45 Q68 78 50 86 Q32 78 30 45 Z" fill="#2d060a" stroke="#d4af37" stroke-width="2"/>
-              <circle cx="50" cy="58" r="14" fill="none" stroke="#e5c378" stroke-width="1.2"/>
-              <!-- Sunburst -->
-              <path d="M50 48 L50 68 M40 58 L60 58 M43 51 L57 65 M43 65 L57 51" stroke="#e5c378" stroke-width="1.5"/>
-              <circle cx="50" cy="58" r="5" fill="#f8e7b5"/>
-              <!-- Laurels -->
-              <path d="M22 62 C20 48 30 36 34 32 C33 42 38 52 42 58 C35 62 26 68 22 62 Z" fill="#c5a059" opacity="0.85"/>
-              <path d="M78 62 C80 48 70 36 66 32 C67 42 62 52 58 58 C65 62 74 68 78 62 Z" fill="#c5a059" opacity="0.85"/>
-              <!-- Bottom Ribbon -->
-              <path d="M26 84 Q50 92 74 84 Q65 92 50 90 Q35 92 26 84 Z" fill="url(#goldGrad)" stroke="#c5a059" stroke-width="1"/>
-              <defs>
-                <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stop-color="#fff0d0"/>
-                  <stop offset="50%" stop-color="#d4af37"/>
-                  <stop offset="100%" stop-color="#8a6520"/>
-                </linearGradient>
-              </defs>
-            </svg>
+            <img src="assets/images/bilaspur_royal_logo.png" alt="Bilaspur Kehloor State Crest" class="brand-crest-img">
           </div>
           <div class="brand-text">
             <h1 class="brand-title">VIRASAT E KEHLOOR</h1>
@@ -168,20 +155,7 @@
       <!-- Section: Rulers of Kehloor (Horizontal Interactive Timeline) -->
       <section class="rulers-section" id="rulers">
         
-        <!-- Ornate Section Header -->
-        <div class="ornate-section-header">
-          <div class="header-filigree-left">
-            <svg viewBox="0 0 100 20" width="80" height="16" fill="none" stroke="#c5a059" stroke-width="1.2">
-              <path d="M0 10 Q30 0 60 10 T100 10 M75 3 L85 10 L75 17 M90 7 L97 10 L90 13"/>
-            </svg>
-          </div>
-          <h2 class="section-title">RULERS OF KEHLOOR</h2>
-          <div class="header-filigree-right">
-            <svg viewBox="0 0 100 20" width="80" height="16" fill="none" stroke="#c5a059" stroke-width="1.2">
-              <path d="M100 10 Q70 0 40 10 T0 10 M25 3 L15 10 L25 17 M10 7 L3 10 L10 13"/>
-            </svg>
-          </div>
-        </div>
+
 
         <!-- Horizontal Timeline Carousel -->
         <div class="timeline-carousel-wrapper">
@@ -196,107 +170,7 @@
             <div class="timeline-golden-line" aria-hidden="true"></div>
 
             <div class="rulers-track" id="rulersTrack">
-              
-              <!-- Ruler 1: Raja Kirpal Chand -->
-              <div class="ruler-card" data-id="1" data-name="Raja Kirpal Chand" data-reign="1650 – 1690" data-desc="Consolidated the defensive boundaries of Kehloor state and strengthened Kahlur hill fortifications against regional skirmishes.">
-                <div class="ruler-avatar-frame">
-                  <div class="ruler-avatar-inner">
-                    <img src="assets/images/ruler_1_kirpal.jpg" alt="Raja Kirpal Chand" class="ruler-portrait" loading="lazy">
-                  </div>
-                  <div class="timeline-node-pin"></div>
-                </div>
-                <div class="ruler-info">
-                  <h3 class="ruler-name">Raja Kirpal Chand</h3>
-                  <span class="ruler-years">(1650 – 1690)</span>
-                </div>
-              </div>
-
-              <!-- Ruler 2: Raja Govind Chand -->
-              <div class="ruler-card" data-id="2" data-name="Raja Govind Chand" data-reign="1690 – 1720" data-desc="Preserved internal harmony and expanded the agrarian trade routes along the fertile Sutlej river basin.">
-                <div class="ruler-avatar-frame">
-                  <div class="ruler-avatar-inner">
-                    <img src="assets/images/ruler_2_govind.jpg" alt="Raja Govind Chand" class="ruler-portrait" loading="lazy">
-                  </div>
-                  <div class="timeline-node-pin"></div>
-                </div>
-                <div class="ruler-info">
-                  <h3 class="ruler-name">Raja Govind Chand</h3>
-                  <span class="ruler-years">(1690 – 1720)</span>
-                </div>
-              </div>
-
-              <!-- Ruler 3: Raja Hira Chand -->
-              <div class="ruler-card" data-id="3" data-name="Raja Hira Chand" data-reign="1720 – 1760" data-desc="A visionary statesman who modernized royal administration, built civic reservoirs, and patronized classical Pahari artists.">
-                <div class="ruler-avatar-frame">
-                  <div class="ruler-avatar-inner">
-                    <img src="assets/images/ruler_3_hira.jpg" alt="Raja Hira Chand" class="ruler-portrait" loading="lazy">
-                  </div>
-                  <div class="timeline-node-pin"></div>
-                </div>
-                <div class="ruler-info">
-                  <h3 class="ruler-name">Raja Hira Chand</h3>
-                  <span class="ruler-years">(1720 – 1760)</span>
-                </div>
-              </div>
-
-              <!-- Ruler 4: Raja Sansar Chand (ACTIVE / FEATURED) -->
-              <div class="ruler-card active-featured" data-id="4" data-name="Raja Sansar Chand" data-reign="1760 – 1823" data-desc="Renowned monarch whose reign witnessed the glorious peak of diplomacy, military prowess, and the world-renowned Kangra-Bilaspur miniature painting school.">
-                <div class="ruler-avatar-frame featured-frame">
-                  <div class="mandala-outer-ring"></div>
-                  <div class="mandala-inner-ring"></div>
-                  <div class="ruler-avatar-inner">
-                    <img src="assets/images/ruler_4_sansar.jpg" alt="Raja Sansar Chand" class="ruler-portrait" loading="lazy">
-                  </div>
-                  <div class="timeline-node-pin active-pin"></div>
-                </div>
-                <div class="ruler-info">
-                  <h3 class="ruler-name">Raja Sansar Chand</h3>
-                  <span class="ruler-years">(1760 – 1823)</span>
-                </div>
-              </div>
-
-              <!-- Ruler 5: Raja Ranjit Chand -->
-              <div class="ruler-card" data-id="5" data-name="Raja Ranjit Chand" data-reign="1823 – 1843" data-desc="Navigated the volatile geopolitical tides of 19th century Punjab and maintained Bilaspur's ancestral sovereign prestige.">
-                <div class="ruler-avatar-frame">
-                  <div class="ruler-avatar-inner">
-                    <img src="assets/images/ruler_5_ranjit.jpg" alt="Raja Ranjit Chand" class="ruler-portrait" loading="lazy">
-                  </div>
-                  <div class="timeline-node-pin"></div>
-                </div>
-                <div class="ruler-info">
-                  <h3 class="ruler-name">Raja Ranjit Chand</h3>
-                  <span class="ruler-years">(1823 – 1843)</span>
-                </div>
-              </div>
-
-              <!-- Ruler 6: Raja Amar Chand -->
-              <div class="ruler-card" data-id="6" data-name="Raja Amar Chand" data-reign="1843 – 1860" data-desc="Initiated the construction of the grand riverside Rang Mahal, built schools, and codified the traditional laws of Kehloor.">
-                <div class="ruler-avatar-frame">
-                  <div class="ruler-avatar-inner">
-                    <img src="assets/images/ruler_6_amar.jpg" alt="Raja Amar Chand" class="ruler-portrait" loading="lazy">
-                  </div>
-                  <div class="timeline-node-pin"></div>
-                </div>
-                <div class="ruler-info">
-                  <h3 class="ruler-name">Raja Amar Chand</h3>
-                  <span class="ruler-years">(1843 – 1860)</span>
-                </div>
-              </div>
-
-              <!-- Ruler 7: Raja Jagat Singh -->
-              <div class="ruler-card" data-id="7" data-name="Raja Jagat Singh" data-reign="1860 – 1890" data-desc="Modernized Kehloor with telegraphic connectivity, modern postal services, and established judicial courts across the state.">
-                <div class="ruler-avatar-frame">
-                  <div class="ruler-avatar-inner">
-                    <img src="assets/images/ruler_7_jagat.jpg" alt="Raja Jagat Singh" class="ruler-portrait" loading="lazy">
-                  </div>
-                  <div class="timeline-node-pin"></div>
-                </div>
-                <div class="ruler-info">
-                  <h3 class="ruler-name">Raja Jagat Singh</h3>
-                  <span class="ruler-years">(1860 – 1890)</span>
-                </div>
-              </div>
-
+              <!-- King cards are dynamically generated from data/index.json by app.js -->
             </div>
           </div>
 
@@ -599,52 +473,119 @@
     </div>
   </div>
 
-  <!-- Modal 2: Ruler Detail Modal -->
-  <div class="royal-modal-backdrop" id="rulerModal" role="dialog" aria-modal="true">
-    <div class="royal-modal-box ruler-detail-box">
-      <div class="modal-corner c-tl"></div><div class="modal-corner c-tr"></div>
-      <div class="modal-corner c-bl"></div><div class="modal-corner c-br"></div>
-      <button class="modal-close-btn" aria-label="Close dialog">&times;</button>
-      
-      <div class="ruler-modal-layout">
-        <div class="ruler-modal-portrait-col">
-          <div class="modal-portrait-frame">
-            <img src="assets/images/ruler_4_sansar.jpg" alt="Ruler Portrait" id="rulerModalImg">
-            <div class="modal-portrait-glow"></div>
-          </div>
-          <h3 class="modal-ruler-name" id="rulerModalName">Raja Sansar Chand</h3>
-          <span class="modal-ruler-reign" id="rulerModalReign">(1760 – 1823)</span>
-          <span class="ruler-dynasty-tag">Chandel Rajput Dynasty of Kehloor</span>
+  <!-- Modal 2: Ruler Detail Modal — FULLSCREEN IMMERSIVE -->
+  <div class="ruler-fullscreen-modal" id="rulerModal" role="dialog" aria-modal="true">
+
+    <!-- Decorative top border strip -->
+    <div class="rfm-top-strip">
+      <div class="rfm-strip-ornament">❖ ── ✦ VIRASAT E KEHLOOR • THE CHRONICLES OF BILASPUR ✦ ── ❖</div>
+    </div>
+
+    <!-- Top Action Bar (Navbar) -->
+    <div class="rfm-top-bar">
+      <!-- Left: Back / Close Button -->
+      <button class="rfm-back-btn" id="rulerModalBackBtn" aria-label="Go back">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        <span>← वापस / Back</span>
+      </button>
+
+      <!-- Center: Language Switcher + Side-by-Side Audio Button -->
+      <div class="rfm-navbar-center-controls">
+        <div class="rfm-lang-toggle">
+          <button class="rfm-lang-btn rfm-lang-active" id="btnLangHindi">
+            <span class="rfm-lang-flag">🇮🇳</span> हिंदी
+          </button>
+          <button class="rfm-lang-btn" id="btnLangEng">
+            <span class="rfm-lang-flag">🇬🇧</span> English
+          </button>
         </div>
 
-        <div class="ruler-modal-details-col">
-          <h4 class="details-section-heading">Historical Chronicle & Reign</h4>
-          <p class="ruler-biography" id="rulerModalBio">
-            A celebrated monarch whose tenure defined the diplomatic, cultural, and military ascendancy of the Kehloor kingdom in the Western Himalayas.
-          </p>
+        <button class="rfm-play-btn" id="btnPlayKingAudio" title="Play / Pause Audio">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" id="playIconSvg"><path d="M8 5v14l11-7z"/></svg>
+          <span id="playBtnText">सुनें / Listen</span>
+        </button>
+        <span class="rfm-audio-dot" id="rulerAudioDot"></span>
+      </div>
 
-          <div class="ruler-stats-grid">
-            <div class="stat-card">
-              <span class="stat-title">Capital</span>
-              <span class="stat-val" id="rulerModalCapital">Bilaspur (Vyasnagar)</span>
-            </div>
-            <div class="stat-card">
-              <span class="stat-title">Key Fort</span>
-              <span class="stat-val" id="rulerModalFort">Kot Kahlur / Tiun</span>
-            </div>
-            <div class="stat-card">
-              <span class="stat-title">Patronage</span>
-              <span class="stat-val" id="rulerModalPatronage">Pahari Miniature Art</span>
-            </div>
+      <!-- Right: King Counter Badge -->
+      <div class="rfm-king-badge" id="rulerModalBadge">
+        <span class="rfm-badge-label">CHANDEL DYNASTY</span>
+        <span class="rfm-badge-num"><span id="rulerModalNum">1</span> / 19</span>
+      </div>
+    </div>
+
+    <!-- MAIN SPLIT LAYOUT -->
+    <div class="rfm-layout">
+
+      <!-- ═══ LEFT PANEL: Majestic King Portrait ═══ -->
+      <div class="rfm-left-panel">
+
+        <!-- King Portrait Frame -->
+        <div class="rfm-portrait-wrap">
+          <div class="rfm-portrait-frame-outer">
+            <div class="rfm-portrait-glow-ring"></div>
+            <img src="" alt="King Portrait" id="rulerModalImg" class="rfm-portrait-img">
+            <div class="rfm-portrait-shine"></div>
           </div>
+          <!-- Gold decorative frame corners -->
+          <div class="rfm-frame-corner rfm-fc-tl"></div>
+          <div class="rfm-frame-corner rfm-fc-tr"></div>
+          <div class="rfm-frame-corner rfm-fc-bl"></div>
+          <div class="rfm-frame-corner rfm-fc-br"></div>
+        </div>
 
-          <div class="ruler-modal-actions">
-            <button class="btn-royal btn-outline-gold" id="btnRulerListenStory">
-              <span>🎙️ Listen to His Story</span>
+        <!-- King Name & Info below portrait -->
+        <div class="rfm-king-info">
+          <div class="rfm-king-crest">👑</div>
+          <h2 class="rfm-king-name" id="rulerModalName">Bir Chand</h2>
+          <div class="rfm-king-timeline" id="rulerModalReign">AD 697 – 730</div>
+          <div class="rfm-dynasty-tag">Chandel Rajput Dynasty of Kehloor</div>
+
+          <!-- Mini Nav: prev/next king with tooltips -->
+          <div class="rfm-king-nav">
+            <button class="rfm-nav-btn" id="rfmPrevKing" title="Previous King">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+              <span>पिछला राजा</span>
+            </button>
+            <button class="rfm-nav-btn" id="rfmNextKing" title="Next King">
+              <span>अगला राजा</span>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
             </button>
           </div>
         </div>
       </div>
+
+      <!-- ═══ RIGHT PANEL: Full Interactive Chronicle ═══ -->
+      <div class="rfm-right-panel">
+
+        <!-- Chronicle Title -->
+        <div class="rfm-chronicle-header">
+          <span class="rfm-chron-ornament">❖</span>
+          <h3 class="rfm-chron-title" id="rfmChronicleTitle">HISTORICAL CHRONICLE OF KEHLOOR</h3>
+          <span class="rfm-chron-ornament">❖</span>
+        </div>
+
+        <!-- Full Scrollable Document Text -->
+        <div class="rfm-doc-scroll" id="rfmDocScroll">
+          <div class="rfm-doc-content" id="rulerModalBio">
+            <!-- Dynamic paragraphs injected here with interactive click & highlight -->
+          </div>
+        </div>
+
+        <!-- Bottom: Reading Progress Bar -->
+        <div class="rfm-progress-bar-wrap">
+          <div class="rfm-progress-bar" id="rfmReadingProgress"></div>
+        </div>
+        <div class="rfm-scroll-hint" id="rfmScrollHint">▼ नीचे स्क्रॉल करें / Scroll to read more</div>
+
+      </div>
+    </div>
+
+    <!-- Decorative bottom border -->
+    <div class="rfm-bottom-strip">
+      <div class="rfm-strip-ornament">❖ ── Chandel Dynasty of Kehloor • Bilaspur Heritage Archives ── ❖</div>
     </div>
   </div>
 
@@ -680,61 +621,305 @@
     <div class="royal-modal-box timeline-large-box">
       <div class="modal-corner c-tl"></div><div class="modal-corner c-tr"></div>
       <div class="modal-corner c-bl"></div><div class="modal-corner c-br"></div>
-      <button class="modal-close-btn" aria-label="Close dialog">&times;</button>
+      <button class="modal-close-btn" aria-label="Close dialog" title="बंद करें / Close">✕</button>
       
       <div class="modal-header">
-        <div class="modal-crest-small">❖</div>
+        <div class="timeline-modal-crest-wrap">
+          <img src="assets/images/bilaspur_royal_logo.png" alt="Chandel Dynasty Royal Crest" class="timeline-modal-crest-logo">
+        </div>
         <h3 class="modal-title">CHANDEL DYNASTY OF KEHLOOR</h3>
         <p class="modal-subtitle">The Chronological Lineage of Bilaspur (697 AD – 1948 AD)</p>
       </div>
 
       <div class="full-timeline-scroll">
-        <div class="timeline-vertical-line"></div>
+        <!-- Center Spine Line -->
+        <div class="timeline-center-spine"></div>
 
-        <div class="timeline-entry">
-          <div class="timeline-dot"></div>
+        <!-- 1. Bir Chand (Left) -->
+        <div class="timeline-row item-left" data-king-idx="1">
           <div class="timeline-card">
-            <span class="timeline-era">697 AD</span>
-            <h4>Foundation by Raja Bir Chand</h4>
-            <p>Raja Bir Chand, an emigrant from Chanderi (Bundelkhand), founded the princely state of Kahlur and built Kot Kahlur fortress.</p>
+            <div class="timeline-card-portrait">
+              <img src="data/1/1.png" alt="Raja Bir Chand" loading="lazy">
+            </div>
+            <div class="timeline-king-content">
+              <span class="timeline-ruler-tag">👑 1ˢᵗ SOVEREIGN • FOUNDER</span>
+              <h4 class="timeline-king-title">Raja Bir Chand</h4>
+              <div class="timeline-reign-badge">AD 697 – 730</div>
+            </div>
+          </div>
+          <div class="timeline-center-node"><span class="node-dot"></span></div>
+        </div>
+
+        <!-- 2. Udhern Chand (Right) -->
+        <div class="timeline-row item-right" data-king-idx="2">
+          <div class="timeline-center-node"><span class="node-dot"></span></div>
+          <div class="timeline-card">
+            <div class="timeline-card-portrait">
+              <img src="data/2/2.png" alt="Raja Udhern Chand" loading="lazy">
+            </div>
+            <div class="timeline-king-content">
+              <span class="timeline-ruler-tag">👑 2ⁿᵈ SOVEREIGN</span>
+              <h4 class="timeline-king-title">Raja Udhern Chand</h4>
+              <div class="timeline-reign-badge">AD 730 – 759</div>
+            </div>
           </div>
         </div>
 
-        <div class="timeline-entry">
-          <div class="timeline-dot"></div>
+        <!-- 3. Kahal Chand (Left) -->
+        <div class="timeline-row item-left" data-king-idx="3">
           <div class="timeline-card">
-            <span class="timeline-era">1650 – 1667 AD</span>
-            <h4>Raja Dip Chand & Founding of Bilaspur</h4>
-            <p>Raja Dip Chand relocated the royal capital from Sunhani to the banks of the Sutlej, founding modern Bilaspur (originally Vyaspur).</p>
+            <div class="timeline-card-portrait">
+              <img src="data/3/3.png" alt="Raja Kahal Chand" loading="lazy">
+            </div>
+            <div class="timeline-king-content">
+              <span class="timeline-ruler-tag">👑 3ʳᵈ SOVEREIGN</span>
+              <h4 class="timeline-king-title">Raja Kahal Chand</h4>
+              <div class="timeline-reign-badge">AD 894 – 902</div>
+            </div>
+          </div>
+          <div class="timeline-center-node"><span class="node-dot"></span></div>
+        </div>
+
+        <!-- 4. Megh Chand (Right) -->
+        <div class="timeline-row item-right" data-king-idx="4">
+          <div class="timeline-center-node"><span class="node-dot"></span></div>
+          <div class="timeline-card">
+            <div class="timeline-card-portrait">
+              <img src="data/4/4.png" alt="Raja Megh Chand" loading="lazy">
+            </div>
+            <div class="timeline-king-content">
+              <span class="timeline-ruler-tag">👑 4ᵗʰ SOVEREIGN</span>
+              <h4 class="timeline-king-title">Raja Megh Chand</h4>
+              <div class="timeline-reign-badge">AD 1220 – 1251</div>
+            </div>
           </div>
         </div>
 
-        <div class="timeline-entry">
-          <div class="timeline-dot"></div>
+        <!-- 5. Dev Chand (Left) -->
+        <div class="timeline-row item-left" data-king-idx="5">
           <div class="timeline-card">
-            <span class="timeline-era">1760 – 1823 AD</span>
-            <h4>Raja Sansar Chand & Pahari Renaissance</h4>
-            <p>A glorious epoch of art, literature, and sovereign consolidation across the hill principalities.</p>
+            <div class="timeline-card-portrait">
+              <img src="data/5/5.png" alt="Raja Dev Chand" loading="lazy">
+            </div>
+            <div class="timeline-king-content">
+              <span class="timeline-ruler-tag">👑 5ᵗʰ SOVEREIGN</span>
+              <h4 class="timeline-king-title">Raja Dev Chand</h4>
+              <div class="timeline-reign-badge">AD 1251 – 1269</div>
+            </div>
+          </div>
+          <div class="timeline-center-node"><span class="node-dot"></span></div>
+        </div>
+
+        <!-- 6. Abhaysandh Chand (Right) -->
+        <div class="timeline-row item-right" data-king-idx="6">
+          <div class="timeline-center-node"><span class="node-dot"></span></div>
+          <div class="timeline-card">
+            <div class="timeline-card-portrait">
+              <img src="data/6/6.png" alt="Raja Abhaysandh Chand" loading="lazy">
+            </div>
+            <div class="timeline-king-content">
+              <span class="timeline-ruler-tag">👑 6ᵗʰ SOVEREIGN</span>
+              <h4 class="timeline-king-title">Raja Abhaysandh Chand</h4>
+              <div class="timeline-reign-badge">AD 1302 – 1347</div>
+            </div>
           </div>
         </div>
 
-        <div class="timeline-entry">
-          <div class="timeline-dot"></div>
+        <!-- 7. Sampuran Chand (Left) -->
+        <div class="timeline-row item-left" data-king-idx="7">
           <div class="timeline-card">
-            <span class="timeline-era">1857 – 1883 AD</span>
-            <h4>Raja Hira Chand's Modernization</h4>
-            <p>Revolutionized land revenue, built carriage roads, introduced new crops, and established classical administrative systems.</p>
+            <div class="timeline-card-portrait">
+              <img src="data/7/7.png" alt="Raja Sampuran Chand" loading="lazy">
+            </div>
+            <div class="timeline-king-content">
+              <span class="timeline-ruler-tag">👑 7ᵗʰ SOVEREIGN</span>
+              <h4 class="timeline-king-title">Raja Sampuran Chand</h4>
+              <div class="timeline-reign-badge">AD 1347 – 1355</div>
+            </div>
+          </div>
+          <div class="timeline-center-node"><span class="node-dot"></span></div>
+        </div>
+
+        <!-- 8. Ratan Chand (Right) -->
+        <div class="timeline-row item-right" data-king-idx="8">
+          <div class="timeline-center-node"><span class="node-dot"></span></div>
+          <div class="timeline-card">
+            <div class="timeline-card-portrait">
+              <img src="data/8/8.png" alt="Raja Ratan Chand" loading="lazy">
+            </div>
+            <div class="timeline-king-content">
+              <span class="timeline-ruler-tag">👑 8ᵗʰ SOVEREIGN</span>
+              <h4 class="timeline-king-title">Raja Ratan Chand</h4>
+              <div class="timeline-reign-badge">AD 1355 – 1406</div>
+            </div>
           </div>
         </div>
 
-        <div class="timeline-entry">
-          <div class="timeline-dot"></div>
+        <!-- 9. Gyan Chand (Left) -->
+        <div class="timeline-row item-left" data-king-idx="9">
           <div class="timeline-card">
-            <span class="timeline-era">1933 – 1948 AD</span>
-            <h4>Raja Anand Chand & Accession to India</h4>
-            <p>The last ruling Raja of Bilaspur before its accession to independent India and the eventual creation of Himachal Pradesh.</p>
+            <div class="timeline-card-portrait">
+              <img src="data/9/9.png" alt="Raja Gyan Chand" loading="lazy">
+            </div>
+            <div class="timeline-king-content">
+              <span class="timeline-ruler-tag">👑 9ᵗʰ SOVEREIGN</span>
+              <h4 class="timeline-king-title">Raja Gyan Chand</h4>
+              <div class="timeline-reign-badge">AD 1518 – 1555</div>
+            </div>
+          </div>
+          <div class="timeline-center-node"><span class="node-dot"></span></div>
+        </div>
+
+        <!-- 10. Bikram Chand (Right) -->
+        <div class="timeline-row item-right" data-king-idx="10">
+          <div class="timeline-center-node"><span class="node-dot"></span></div>
+          <div class="timeline-card">
+            <div class="timeline-card-portrait">
+              <img src="data/10/10.png" alt="Raja Bikram Chand" loading="lazy">
+            </div>
+            <div class="timeline-king-content">
+              <span class="timeline-ruler-tag">👑 10ᵗʰ SOVEREIGN</span>
+              <h4 class="timeline-king-title">Raja Bikram Chand</h4>
+              <div class="timeline-reign-badge">AD 1555 – 1593</div>
+            </div>
           </div>
         </div>
+
+        <!-- 11. Sultan Chand (Left) -->
+        <div class="timeline-row item-left" data-king-idx="11">
+          <div class="timeline-card">
+            <div class="timeline-card-portrait">
+              <img src="data/11/11.png" alt="Raja Sultan Chand" loading="lazy">
+            </div>
+            <div class="timeline-king-content">
+              <span class="timeline-ruler-tag">👑 11ᵗʰ SOVEREIGN</span>
+              <h4 class="timeline-king-title">Raja Sultan Chand</h4>
+              <div class="timeline-reign-badge">AD 1593 – 1600</div>
+            </div>
+          </div>
+          <div class="timeline-center-node"><span class="node-dot"></span></div>
+        </div>
+
+        <!-- 12. Kalyan Chand (Right) -->
+        <div class="timeline-row item-right" data-king-idx="12">
+          <div class="timeline-center-node"><span class="node-dot"></span></div>
+          <div class="timeline-card">
+            <div class="timeline-card-portrait">
+              <img src="data/12/12.png" alt="Raja Kalyan Chand" loading="lazy">
+            </div>
+            <div class="timeline-king-content">
+              <span class="timeline-ruler-tag">👑 12ᵗʰ SOVEREIGN</span>
+              <h4 class="timeline-king-title">Raja Kalyan Chand</h4>
+              <div class="timeline-reign-badge">AD 1600 – 1636</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 13. Tara Chand (Left) -->
+        <div class="timeline-row item-left" data-king-idx="13">
+          <div class="timeline-card">
+            <div class="timeline-card-portrait">
+              <img src="data/13/13.png" alt="Raja Tara Chand" loading="lazy">
+            </div>
+            <div class="timeline-king-content">
+              <span class="timeline-ruler-tag">👑 13ᵗʰ SOVEREIGN</span>
+              <h4 class="timeline-king-title">Raja Tara Chand</h4>
+              <div class="timeline-reign-badge">AD 1636 – 1653</div>
+            </div>
+          </div>
+          <div class="timeline-center-node"><span class="node-dot"></span></div>
+        </div>
+
+        <!-- 14. Dip Chand (Right) -->
+        <div class="timeline-row item-right" data-king-idx="14">
+          <div class="timeline-center-node"><span class="node-dot"></span></div>
+          <div class="timeline-card">
+            <div class="timeline-card-portrait">
+              <img src="data/14/14.png" alt="Raja Dip Chand" loading="lazy">
+            </div>
+            <div class="timeline-king-content">
+              <span class="timeline-ruler-tag">👑 14ᵗʰ SOVEREIGN • FOUNDER OF BILASPUR</span>
+              <h4 class="timeline-king-title">Raja Dip Chand</h4>
+              <div class="timeline-reign-badge">AD 1653 – 1665</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 15. Bhim Chand (Left) -->
+        <div class="timeline-row item-left" data-king-idx="15">
+          <div class="timeline-card">
+            <div class="timeline-card-portrait">
+              <img src="data/15/15.png" alt="Raja Bhim Chand" loading="lazy">
+            </div>
+            <div class="timeline-king-content">
+              <span class="timeline-ruler-tag">👑 15ᵗʰ SOVEREIGN</span>
+              <h4 class="timeline-king-title">Raja Bhim Chand</h4>
+              <div class="timeline-reign-badge">AD 1665 – 1692</div>
+            </div>
+          </div>
+          <div class="timeline-center-node"><span class="node-dot"></span></div>
+        </div>
+
+        <!-- 16. Ajmer Chand (Right) -->
+        <div class="timeline-row item-right" data-king-idx="16">
+          <div class="timeline-center-node"><span class="node-dot"></span></div>
+          <div class="timeline-card">
+            <div class="timeline-card-portrait">
+              <img src="data/16/16.png" alt="Raja Ajmer Chand" loading="lazy">
+            </div>
+            <div class="timeline-king-content">
+              <span class="timeline-ruler-tag">👑 16ᵗʰ SOVEREIGN</span>
+              <h4 class="timeline-king-title">Raja Ajmer Chand</h4>
+              <div class="timeline-reign-badge">AD 1692 – 1741</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 17. Devi Chand (Left) -->
+        <div class="timeline-row item-left" data-king-idx="17">
+          <div class="timeline-card">
+            <div class="timeline-card-portrait">
+              <img src="data/17/17.png" alt="Raja Devi Chand" loading="lazy">
+            </div>
+            <div class="timeline-king-content">
+              <span class="timeline-ruler-tag">👑 17ᵗʰ SOVEREIGN</span>
+              <h4 class="timeline-king-title">Raja Devi Chand</h4>
+              <div class="timeline-reign-badge">AD 1741 – 1778</div>
+            </div>
+          </div>
+          <div class="timeline-center-node"><span class="node-dot"></span></div>
+        </div>
+
+        <!-- 18. Mahan Chand (Right) -->
+        <div class="timeline-row item-right" data-king-idx="18">
+          <div class="timeline-center-node"><span class="node-dot"></span></div>
+          <div class="timeline-card">
+            <div class="timeline-card-portrait">
+              <img src="data/18/18.png" alt="Raja Mahan Chand" loading="lazy">
+            </div>
+            <div class="timeline-king-content">
+              <span class="timeline-ruler-tag">👑 18ᵗʰ SOVEREIGN</span>
+              <h4 class="timeline-king-title">Raja Mahan Chand</h4>
+              <div class="timeline-reign-badge">AD 1778 – 1824</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 19. Kharak Chand (Left) -->
+        <div class="timeline-row item-left" data-king-idx="19">
+          <div class="timeline-card">
+            <div class="timeline-card-portrait">
+              <img src="data/19/19.png" alt="Raja Kharak Chand" loading="lazy">
+            </div>
+            <div class="timeline-king-content">
+              <span class="timeline-ruler-tag">👑 19ᵗʰ SOVEREIGN</span>
+              <h4 class="timeline-king-title">Raja Kharak Chand</h4>
+              <div class="timeline-reign-badge">AD 1824 – 1839</div>
+            </div>
+          </div>
+          <div class="timeline-center-node"><span class="node-dot"></span></div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -899,6 +1084,8 @@
     </div>
   </div>
 
+  <!-- Master Kings Data (Instant zero-delay offline loading) -->
+  <script src="js/kings-data.js"></script>
   <!-- JavaScript App Logic -->
   <script src="js/app.js"></script>
 </body>
